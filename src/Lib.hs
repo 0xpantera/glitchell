@@ -1,14 +1,13 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Lib
     ( randomReplaceByte
+    , randomSortSection
     ) where
 
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BC
 import System.Random
 
-
-someFunc = putStrLn "Hello"
 
 intToChar :: Int -> Char
 intToChar int = toEnum safeInt
@@ -32,3 +31,19 @@ randomReplaceByte bytes = do
   location <- randomRIO (1,bytesLength)
   charVal <- randomRIO (0,255)
   return (replaceByte location charVal bytes)  
+
+-- More sophisticated approach:
+
+sortSection :: Int -> Int -> BC.ByteString -> BC.ByteString
+sortSection start size bytes = mconcat [before,changed,after]
+  where (before,rest) = BC.splitAt start bytes
+        (target,after) = BC.splitAt size rest
+        changed = BC.reverse (BC.sort target)
+
+
+randomSortSection :: BC.ByteString -> IO BC.ByteString
+randomSortSection bytes = do
+  let sectionSize = 25 --arbitrary section size
+  let bytesLength = BC.length bytes
+  start <- randomRIO (0,bytesLength - sectionSize)
+  return (sortSection start sectionSize bytes)  
