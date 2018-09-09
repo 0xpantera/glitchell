@@ -1,10 +1,11 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Lib
-    ( someFunc
+    ( randomReplaceByte
     ) where
 
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BC
+import System.Random
 
 
 someFunc = putStrLn "Hello"
@@ -22,6 +23,12 @@ replaceByte :: Int -> Int -> BC.ByteString -> BC.ByteString
 replaceByte loc charVal bytes = mconcat [before,newChar,after]
   where (before, rest) = BC.splitAt loc bytes
         after = BC.drop 1 rest
-        newChar = intToBC charVal
+        newChar = intToBc charVal
 
 
+randomReplaceByte :: BC.ByteString -> IO BC.ByteString
+randomReplaceByte bytes = do
+  let bytesLength = BC.length bytes
+  location <- randomRIO (1,bytesLength)
+  charVal <- randomRIO (0,255)
+  return (replaceByte location charVal bytes)  

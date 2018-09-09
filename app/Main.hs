@@ -11,7 +11,7 @@ main = do
   args <- getArgs
   let fileName = head args
   imageFile <- BC.readFile fileName
-  glitched <- imageFile
-  let glitchedFileName <- mconcat ["glitched_", fileName]
+  glitched <- randomReplaceByte imageFile
+  let glitchedFileName =  mconcat ["glitched_", fileName]
   BC.writeFile glitchedFileName glitched
   print "done"
